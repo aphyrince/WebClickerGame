@@ -1,6 +1,5 @@
 package controller;
 
-import java.time.LocalDate;
 import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,14 +13,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import model.Log;
 import repository.LogRepository;
 
-
-
 @Controller
 public class MainController {
 
     private final LogRepository logRepository;
 
-    public MainController(LogRepository logRepository){
+    public MainController(LogRepository logRepository) {
         this.logRepository = logRepository;
     }
 
@@ -35,21 +32,20 @@ public class MainController {
     public List<Log> getLastTenLog() {
         return logRepository.getLastTenLogs();
     }
-    
-    
+
     @PostMapping("/")
     @ResponseBody
     public void clicked(@RequestParam String id) {
         Log logObject = new Log();
         logObject.setId(id);
-        HttpServletRequest req = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
+        HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest();
         String ip = req.getHeader("X-FORWARDED-FOR");
-        if(ip == null)
+        if (ip == null)
             ip = req.getRemoteAddr();
         logObject.setIp(ip);
-        logObject.setDate(LocalDate.now());
 
         logRepository.storeLog(logObject);
     }
-    
+
 }

@@ -15,30 +15,30 @@ public class LogRepository {
 
     public LogRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.logRowMapper = (rs,i)->{
+        this.logRowMapper = (rs, i) -> {
             Log logObject = new Log();
             logObject.setId(rs.getString("id"));
             logObject.setIp(rs.getString("ip"));
-            logObject.setDate(rs.getDate("logdate").toLocalDate());
+            logObject.setDate(rs.getTimestamp("logdate").toLocalDateTime());
             return logObject;
         };
     }
 
-    public List<Log> getAllLog(){
+    public List<Log> getAllLog() {
         String sql = "select * from log";
 
-        return jdbcTemplate.query(sql,logRowMapper);
+        return jdbcTemplate.query(sql, logRowMapper);
     }
 
-    public List<Log> getLastTenLogs(){
+    public List<Log> getLastTenLogs() {
         String sql = "select * from log order by seq desc limit 0,10";
 
-        return jdbcTemplate.query(sql,logRowMapper);
+        return jdbcTemplate.query(sql, logRowMapper);
     }
 
-    public void storeLog(Log log){
-        String sql = "insert into log (id,ip,logdate) values (?,?,?)";
+    public void storeLog(Log log) {
+        String sql = "insert into log (id,ip) values (?,?)";
 
-        jdbcTemplate.update(sql,log.getId(),log.getIp(), log.getDate());
+        jdbcTemplate.update(sql, log.getId(), log.getIp());
     }
 }
