@@ -1,6 +1,5 @@
 package repository;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,7 +19,7 @@ public class LogRepository {
             Log logObject = new Log();
             logObject.setId(rs.getString("id"));
             logObject.setIp(rs.getString("ip"));
-            logObject.setDate(LocalDate.ofEpochDay(rs.getDate("date").getTime()));
+            logObject.setDate(rs.getDate("logdate").toLocalDate());
             return logObject;
         };
     }
@@ -32,13 +31,13 @@ public class LogRepository {
     }
 
     public List<Log> getLastTenLogs(){
-        String sql = "select * from log limit 0,10";
+        String sql = "select * from log order by seq desc limit 0,10";
 
         return jdbcTemplate.query(sql,logRowMapper);
     }
 
     public void storeLog(Log log){
-        String sql = "insert into log (id,ip,date) values (?,?,?)";
+        String sql = "insert into log (id,ip,logdate) values (?,?,?)";
 
         jdbcTemplate.update(sql,log.getId(),log.getIp(), log.getDate());
     }
